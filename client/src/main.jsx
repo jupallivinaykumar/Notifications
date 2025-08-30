@@ -1,13 +1,26 @@
-import React from "react";
-import { createRoot } from "react-dom/client";
-import App from "./App";
 import "./index.css";
+import NotificationScheduler from "./components/NotificationScheduler";
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
 
-createRoot(document.getElementById("root")).render(<App />);
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
 
+// Register service worker
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker
-    .register("/service-worker.js")
-    .then((reg) => console.log("SW registered:", reg))
-    .catch((err) => console.log("SW failed:", err));
+  window.addEventListener("load", () => {
+    navigator.serviceWorker
+      .register("/sw.js")
+      .then((reg) => {
+        console.log("✅ Service Worker registered:", reg);
+      })
+      .catch((err) => {
+        console.error("❌ Service Worker registration failed:", err);
+      });
+  });
 }
+

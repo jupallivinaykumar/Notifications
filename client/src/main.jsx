@@ -6,12 +6,8 @@ import "./index.css";
 createRoot(document.getElementById("root")).render(<App />);
 
 if ("serviceWorker" in navigator) {
-  window.addEventListener("load", async () => {
-    try {
-      await navigator.serviceWorker.register("/sw.js");
-      console.log("✅ Service Worker registered");
-    } catch (err) {
-      console.error("❌ SW registration failed:", err);
-    }
-  });
+  navigator.serviceWorker
+    .register("/service-worker.js")
+    .then((reg) => console.log("SW registered:", reg))
+    .catch((err) => console.log("SW failed:", err));
 }

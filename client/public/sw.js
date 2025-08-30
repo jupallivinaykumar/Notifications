@@ -1,17 +1,21 @@
-// public/sw.js
+// client/public/service-worker.js
 
-// Listen for messages from the client
-self.addEventListener("message", (event) => {
-  const { title, body } = event.data;
+self.addEventListener("push", (event) => {
+  console.log("Push received:", event);
 
-  self.registration.showNotification(title, {
-    body,
-    icon: "/icon.png" // optional
-  });
+  const data = event.data.json();
+
+  const options = {
+    body: data.body,
+    icon: data.icon || "/icon.png",
+    data: { url: data.url || "/" },
+  };
+
+  event.waitUntil(self.registration.showNotification(data.title, options));
 });
 
 // Handle notification click
-self.addEventListener("message", (event) => {
-  const { title, body } = event.data;
-  self.registration.showNotification(title, { body, icon: "/icon.png" });
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  event.waitUntil(clients.openWindow(event.notification.data.url));
 });

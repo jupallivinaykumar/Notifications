@@ -1,6 +1,3 @@
-// client/public/service-worker.js
-
-// --- Install event ---
 self.addEventListener("install", (event) => {
   console.log("Service Worker installed");
   self.skipWaiting(); // activate immediately
@@ -17,27 +14,24 @@ self.addEventListener("fetch", (event) => {
   // Currently just lets requests pass through
 });
 
-// --- Push Notification event ---
 self.addEventListener("push", (event) => {
   console.log("Push received:", event);
 
-  let data = {};
-  try {
-    data = event.data.json();
-  } catch (e) {
-    data = { title: "Notification", body: event.data.text() };
-  }
-
+  const data = event.data.json();
   const options = {
     body: data.body,
     icon: data.icon || "/icon.png",
     data: { url: data.url || "/" },
   };
 
-  event.waitUntil(
-    self.registration.showNotification(data.title, options)
-  );
+  event.waitUntil(self.registration.showNotification(data.title, options));
 });
+
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  event.waitUntil(clients.openWindow(event.notification.data.url));
+});
+
 
 // --- Notification click event ---
 self.addEventListener("notificationclick", (event) => {
